@@ -1,0 +1,78 @@
+cu_cp:
+  amf:
+    addr: 192.168.8.108       # from OAI: amf_ip_address
+    port: 38412
+    bind_addr: 192.168.8.59  # from OAI: GNB_IPV4_ADDRESS_FOR_NG_AMF
+    supported_tracking_areas:
+      - tac: 1
+        plmn_list:
+          - plmn: "00101"
+            tai_slice_support_list:
+              - sst: 1
+
+ru_sdr:
+  device_driver: uhd
+  device_args: type=b200,num_recv_frames=64,num_send_frames=64
+  srate: 61.44                 # higher rate to support 40 MHz and 30kHz SCS
+  otw_format: sc12
+  tx_gain: 50                  # matches OAI: att_tx = 12 (adjusted reasonably)
+  rx_gain: 60                  # matches OAI: max_rxgain = 114 (approximation)
+
+cell_cfg:
+  dl_arfcn: 641280             # matches OAI: absoluteFrequencySSB
+  band: 78
+  channel_bandwidth_MHz: 40   # matches OAI: dl_carrierBandwidth = 106 (≈40 MHz)
+  common_scs: 30
+  plmn: "00101"
+  tac: 1
+  pci: 0
+
+  ssb:
+    ssb_period: 20
+    ssb_block_power_dbm: -25
+
+  prach:
+    prach_config_index: 160
+    prach_root_sequence_index: 1
+      #zero_correlation_zone: 13
+    preamble_rx_target_pw: -96
+    preamble_trans_max: 6
+    power_ramping_step_db: 4
+    nof_cb_preambles_per_ssb: 60
+    ra_resp_window: 4
+
+  pucch:
+    p0_nominal: -90
+
+  pusch:
+    p0_nominal_with_grant: -90
+    target_sinr: 15
+    
+  tdd_ul_dl_cfg:
+    dl_ul_tx_period: 20           # 10 ms periodicity (OAI uses ms10)
+    nof_dl_slots: 7
+    nof_dl_symbols: 6
+    nof_ul_slots: 2
+    nof_ul_symbols: 4
+
+  srs:
+    srs_period_ms: 20
+    srs_max_nof_sym_per_slot: 2
+    srs_nof_sym_per_resource: 1
+    srs_tx_comb: 4
+    srs_cyclic_shift_reuse: 1
+    srs_sequence_id_reuse: 1
+
+  csi:
+    csi_rs_enabled: true
+    csi_rs_period: 20
+
+log:
+  filename: /tmp/gnb.log
+  all_level: info   # You can also use 'debug' for more detail
+  
+pcap:
+  mac_enable: false
+  mac_filename: /tmp/gnb_mac.pcap
+  ngap_enable: false
+  ngap_filename: /tmp/gnb_ngap.pcap
